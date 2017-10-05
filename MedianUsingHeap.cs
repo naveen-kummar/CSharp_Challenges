@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-public class MinInteHeap{
+public class InteHeap{
+    
+    
+    public InteHeap(bool isMaxHeap)
+    {
+        m_isMaxHeap = isMaxHeap;
+        size = 0;
+    }
+    
+    bool m_isMaxHeap = false;
 	public int capacity = 10;
-	private int size = 0;
+	public int size = 0;
 
-	float[] items = new float[10];
+	public float[] items = new float[10];
 
 
 	private int getLeftChildIndex(int parentIndex){ return ((2 * parentIndex) + 1); }
@@ -49,52 +58,175 @@ public class MinInteHeap{
 		//Console.WriteLine("add item {0} and updated size as {1}", item, size);
 		HeapifyUp();
 	}
+    
+    public float peak()
+    {
+        return items[0];
+    }
 
 	public void HeapifyUp()
 	{
 		int index = size - 1;
-		while (hasParent(index) && (parent(index)  > items[index]))
+		while (hasParent(index) && (NeedToMoveUp( parent(index), items[index] )) )
 		{
+          //  Console.WriteLine("HU Swaping values {0:N1} to {1:N1} ",items[getParentIndex(index)], items[index]);
 			swap(getParentIndex(index), index);
 			index = getParentIndex(index);
+            
+
 		}
+        
+    /*                         int szSmallHeap = size;
+         
+        Console.WriteLine("------------");
+         Console.WriteLine("HU-CurrentHeap:");
+         while(szSmallHeap > 0)
+         {
+             Console.WriteLine("{0:N1}", items[szSmallHeap - 1]);
+             szSmallHeap--;
+         }*/
 	}
+    
+    bool NeedToMoveUp(float Root, float Child )
+    {
+        if(m_isMaxHeap)
+            return (Root < Child);
+         else
+             return (Root > Child); 
+    }
+    
+     bool IsInOrder(float Root, float Child )
+    {
+        if(m_isMaxHeap)
+            return (Root > Child);
+         else
+             return (Root < Child); 
+    }
+    
+    
+    public float poll()
+    {
+        float item = items[0];
+        items[0] = items[size - 1];
+        --size;
+        heapifyDown();
+        return item;
+        
+    }
+    
+    public void heapifyDown()
+    {
+        int index = 0;
+        while(hasLeftChild(index))
+        {
+            int smallerIndex = getLeftChildIndex(index);
+            
+            if(hasRightChild(index) && (NeedToMoveUp( leftChild(index), rightChild(index)) ))
+            {
+                smallerIndex = getRightChildIndex(index);
+            }
+            
+            if(IsInOrder(items[index] , items[smallerIndex]))
+            {
+                break;
+            }
+            else
+            {
+                //Console.WriteLine("HD Swaping values {0:N1} to {1:N1} ",items[index], items[smallerIndex]);
+                swap(index, smallerIndex);
+            }
+            index = smallerIndex;
+        }
+    }
 
-	public float getMedian()
-	{
-		//Console.WriteLine("About to get median at {0}", Convert.ToInt32((size) ));
-
-
-		//Console.WriteLine("got {0} as  median at {1}", Convert.ToInt32( items[(size/2) ]), Convert.ToInt32((size/2) ));
-
-		if (((size) % 2) == 0)
-		{
-			float avg = 2.0f;
-			float result = (items[(size / 2) - 1] + items[(size / 2)]) / avg;
-
-			//Console.WriteLine(" get median at {0}", result);
-			return result;
-		}
-		else
-			return (items[((size - 1) / 2)]);
-
-
-
-
-	}
 
 }
 class Solution {
 
 	static void Main(String[] args) {
 		int n = Convert.ToInt32(Console.ReadLine());
-		int[] a = new int[n];
-		MinInteHeap myHeap = new MinInteHeap();
+		//float[] a = new float[n];
+		InteHeap largeSet = new InteHeap(false);
+        InteHeap smallSet = new InteHeap(true);
+        float[] median = new float[n];
+        
 		for (int a_i = 0; a_i < n; a_i++){
-			myHeap.add(Convert.ToInt32(Console.ReadLine()));
+            float number = (float) Convert.ToDouble(Console.ReadLine());
+            addNumber(number, smallSet, largeSet);
+			reBalance(smallSet, largeSet);
+            
 
-			Console.WriteLine("{0:N1}", myHeap.getMedian());
+			Console.WriteLine("{0:N1}", getMedian(smallSet, largeSet));
 
 		}
 	}
+    
+    
+    static void  addNumber(float number, InteHeap smallSet, InteHeap largeSet)
+    {
+       // InteHeap smallHeap = if(minHeap.size < maxHeap.size) ? minHeap : maxHeap;
+        
+        if((smallSet.size == 0) || (number < smallSet.peak()))
+           {
+               //  Console.WriteLine("Adding {0:N1} to Max Heap as {1:N1} ",number, smallSet.peak());
+               smallSet.add(number);
+           }
+           else
+           {
+              // Console.WriteLine("Adding {0:N1} to Min Heap as {1:N1} ",number, smallSet.peak());
+               largeSet.add(number);
+           }
+    }
+    
+    static void  reBalance(InteHeap smallSet, InteHeap largeSet)
+    {
+        InteHeap largeHeap = (smallSet.size > largeSet.size) ? smallSet : largeSet;
+        InteHeap smallHeap = (smallSet.size > largeSet.size) ? largeSet : smallSet;
+        
+        
+        if((largeHeap.size - smallHeap.size) >= 2)
+        {
+            smallHeap.add(largeHeap.poll());
+        }
+        
+    }
+    
+     static float  getMedian(InteHeap smallSet, InteHeap largeSet)
+    {
+        InteHeap largeHeap = (smallSet.size > largeSet.size) ? smallSet : largeSet;
+        InteHeap smallHeap = (smallSet.size > largeSet.size) ? largeSet : smallSet;
+         
+        int szLargeHeap = largeHeap.size;
+         int szSmallHeap = smallHeap.size;
+         
+        Console.WriteLine("------------");
+         Console.WriteLine("LargeHeap:");
+         while(szLargeHeap > 0)
+         {
+             Console.WriteLine("{0:N1}", largeHeap.items[szLargeHeap - 1]);
+             szLargeHeap--;
+         }
+         
+                  
+         Console.WriteLine("------------");
+         Console.WriteLine("SmallHeap:");
+         while(szSmallHeap > 0)
+         {
+             Console.WriteLine("{0:N1}", smallHeap.items[szSmallHeap - 1]);
+             szSmallHeap--;
+         }
+         
+        Console.WriteLine("------------");
+      
+         if(smallHeap.size == largeHeap.size)
+         {
+             return ((largeHeap.peak() + smallHeap.peak())/(float)2.0);
+         }
+         else
+         {
+             return largeHeap.peak();
+         }
+     }
+           
+           
 }
