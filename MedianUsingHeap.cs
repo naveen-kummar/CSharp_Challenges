@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+//using System.Globalization.CultureInfo;
 
 public class InteHeap{
     
@@ -144,19 +145,19 @@ public class InteHeap{
 class Solution {
 
 	static void Main(String[] args) {
-		int n = Convert.ToInt32(Console.ReadLine());
+		double n = Convert.ToInt32(Console.ReadLine());
 		//float[] a = new float[n];
 		InteHeap largeSet = new InteHeap(false);
         InteHeap smallSet = new InteHeap(true);
-        float[] median = new float[n];
+        //List<float> median;// = new float[n];
         
-		for (int a_i = 0; a_i < n; a_i++){
+		for (double a_i = 0; a_i < n; a_i++){
             float number = (float) Convert.ToDouble(Console.ReadLine());
             addNumber(number, smallSet, largeSet);
 			reBalance(smallSet, largeSet);
             
 
-			Console.WriteLine("{0:N1}", getMedian(smallSet, largeSet));
+			Console.WriteLine( getMedian(smallSet, largeSet).ToString("N1").Replace(",",""));
 
 		}
 	}
@@ -196,7 +197,7 @@ class Solution {
         InteHeap largeHeap = (smallSet.size > largeSet.size) ? smallSet : largeSet;
         InteHeap smallHeap = (smallSet.size > largeSet.size) ? largeSet : smallSet;
          
-        int szLargeHeap = largeHeap.size;
+        /*int szLargeHeap = largeHeap.size;
          int szSmallHeap = smallHeap.size;
          
         Console.WriteLine("------------");
@@ -216,7 +217,7 @@ class Solution {
              szSmallHeap--;
          }
          
-        Console.WriteLine("------------");
+        Console.WriteLine("------------");*/
       
          if(smallHeap.size == largeHeap.size)
          {
