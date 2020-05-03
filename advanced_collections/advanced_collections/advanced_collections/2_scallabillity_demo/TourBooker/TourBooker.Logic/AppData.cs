@@ -15,7 +15,7 @@ namespace Pluralsight.AdvCShColls.TourBooker.Logic
 			CsvReader reader = new CsvReader(csvFilePath);
 			this.AllCountries = reader.ReadAllCountries().OrderBy(x=>x.Name).ToList();
 
-            this.AllCountriesByKey = this.AllCountries.ToDictionary(x=>x.Code);
+            this.AllCountriesByKey = this.AllCountries.ToDictionary(x=>x.Code, StringComparer.OrdinalIgnoreCase);
 
             // during the module, the above line is changed to
             //this.AllCountries = reader.ReadAllCountries().OrderBy(x=>x.Name).ToList();
