@@ -12,7 +12,7 @@ namespace Pluralsight.AdvCShColls.TourBooker.Logic
 		public void Initialize(string csvFilePath)
 		{
 			CsvReader reader = new CsvReader(csvFilePath);
-			this.AllCountries = reader.ReadAllCountries();
+			this.AllCountries = reader.ReadAllCountries().OrderBy(x=>x.Name).ToList();
 
 			// during the module, the above line is changed to
 			//this.AllCountries = reader.ReadAllCountries().OrderBy(x=>x.Name).ToList();
