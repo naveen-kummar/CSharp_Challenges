@@ -16,7 +16,22 @@ namespace Pluralsight.AdvCShColls.TourBooker.Logic
             Value = value;
         }
 
-        public override string ToString() => Value; 
+        public override string ToString() => Value;
+
+        public override bool Equals(Object obj)
+        {
+            if(obj is CountryCode Other)
+            {
+                return StringComparer.OrdinalIgnoreCase.Equals(this.Value, Other.Value);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(this.Value);
+
     }
 
 	public class Country

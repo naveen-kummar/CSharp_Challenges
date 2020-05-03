@@ -45,8 +45,7 @@ namespace Pluralsight.AdvCShColls.TourBooker.UI
 			if (code.Length != 3)
 				return null;
 
-            CountryCode country_code = new CountryCode(code);
-            AllData.AllCountriesByKey.TryGetValue(country_code, out Country result);
+            AllData.AllCountriesByKey.TryGetValue(new CountryCode(code), out Country result);
 
             return result;
 		}
