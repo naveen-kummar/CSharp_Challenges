@@ -30,7 +30,7 @@ namespace Pluralsight.AdvCShColls.TourBooker.UI
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			AllData.Initialize(@"F:\Advanced Collections\Code\PopByLargest.csv");
+			AllData.Initialize(@"D:\WorkBench\C#\CSharp_Challenges\advanced_collections\advanced_collections\advanced_collections\2_scallabillity_demo\PopByLargest.csv");
 			this.DataContext = AllData;
 		}
 
