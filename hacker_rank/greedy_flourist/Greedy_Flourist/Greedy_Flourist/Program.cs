@@ -22,36 +22,42 @@ class Solution
         int minimum_cost = 0;
         List<int> flower_cost = new List<int>(c);
 
+        flower_cost.Sort();
+        flower_cost.Reverse();
 
-        flower_cost.ForEach(item => Console.Write(item + ","));
+        int total_flowers = flower_cost.Count();
+        int friend_iter = 1;
+        for (int flower = 0; flower < total_flowers;)
+        {
+            for (int friend = 0; (friend < k) && (flower < total_flowers); friend++)
+            {
+                minimum_cost += flower_cost[flower] * friend_iter;
+                ++flower;
+            }
+
+            ++friend_iter;
+        }
 
         return minimum_cost;
     }
 
     static void Main(string[] args)
     {
-      //  TextWriter textWriter = new StreamWriter(@System.Environment.GetEnvironmentVariable("OUTPUT_PATH"), true);
+        TextWriter textWriter = new StreamWriter(@System.Environment.GetEnvironmentVariable("OUTPUT_PATH"), true);
 
-        string first_line = "5 3";
-        string second_line = "1 3 5 7 9";
-
-        string[] nk = first_line.Split(' ');
+        string[] nk = Console.ReadLine().Split(' ');
 
         int n = Convert.ToInt32(nk[0]);
 
         int k = Convert.ToInt32(nk[1]);
 
-        int[] c = Array.ConvertAll(second_line.Split(' '), cTemp => Convert.ToInt32(cTemp))
+        int[] c = Array.ConvertAll(Console.ReadLine().Split(' '), cTemp => Convert.ToInt32(cTemp))
         ;
         int minimumCost = getMinimumCost(k, c);
 
-        Console.WriteLine(minimumCost);
+        textWriter.WriteLine(minimumCost);
 
-        first_line =Console.ReadLine();
-
-        // textWriter.WriteLine(minimumCost);
-
-        //  textWriter.Flush();
-        //  textWriter.Close();
+        textWriter.Flush();
+        textWriter.Close();
     }
 }
