@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System;
 
@@ -19,6 +20,7 @@ namespace all_problems
 {
     class FindHealthyDNA
     {
+
         static void ClassMain(string[] args)
         {
             int n = Convert.ToInt32(Console.ReadLine());
@@ -29,7 +31,8 @@ namespace all_problems
             ;
             int s = Convert.ToInt32(Console.ReadLine());
 
-            int[] CostData = new int[s];
+            int min = Int32.MaxValue;
+            int max = 0;
 
             for (int sItr = 0; sItr < s; sItr++)
             {
@@ -41,55 +44,54 @@ namespace all_problems
 
                 string d = firstLastd[2];
 
-                CostData[sItr] = GetHealthValues(n, genes, health, first, last, d);
+                GetHealthValues(n, genes, health, first, last, d, ref min, ref max);
             }
 
-            Array.Sort(CostData);
-
-            Console.WriteLine("{0} {1}", CostData[0], CostData[s - 1]);
+            Console.WriteLine("{0} {1}", min, max);
 
         }
 
-        static int GetHealthValues(int n,
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static void GetHealthValues(int n,
                                     string[] genes,
                                     int[] health,
                                     int first,
                                     int last,
-                                    string d)
+                                    string d,
+                                    ref int min,
+                                    ref int max)
         {
             int Cost = 0;
 
             for (int nLoop = first; nLoop <= last; nLoop++)
             {
-                /* Console.WriteLine("Count of {0} in {1} is {2}", 
-                                     genes[nLoop], 
-                                     d, 
-                                     Regex.Matches(d, genes[nLoop]).Count);*/
 
                 int GeneCount = 0;
                 int Length = d.Length;
                 int CurrentIndex = d.IndexOf(genes[nLoop], 0, Length);
 
-                /* Console.WriteLine("Index of {0} in {1} is {2} and Max is {3}", 
-                                     genes[nLoop], 
-                                     d, 
-                                     CurrentIndex,
-                                     (Length));*/
-
                 while ((CurrentIndex != -1) && (CurrentIndex <= (Length)))
                 {
-                    //Console.WriteLine("Adding cost as {0}", health[nLoop]); 
+
                     Cost += health[nLoop];
                     CurrentIndex = d.IndexOf(genes[nLoop], CurrentIndex + 1, ((Length) - (CurrentIndex + 1)));
                 }
 
             }
 
-            //Console.WriteLine("Returning Cost as {0}", Cost);
-            return Cost;
+            if (min > Cost)
+            {
+                min = Cost;
+            }
+
+            if (max < Cost)
+            {
+                max = Cost;
+            }
+
+            return;
 
         }
 
     }
-
 }
