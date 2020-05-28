@@ -12,6 +12,9 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
+using System.Management.Instrumentation;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Text;
 using System;
 
@@ -31,67 +34,59 @@ namespace all_problems
             ;
             int s = Convert.ToInt32(Console.ReadLine());
 
-            int min = Int32.MaxValue;
-            int max = 0;
 
-            for (int sItr = 0; sItr < s; sItr++)
-            {
-                string[] firstLastd = Console.ReadLine().Split(' ');
+            int[] min_values = Enumerable.Repeat<int>(Int32.MaxValue, s).ToArray();
 
-                int first = Convert.ToInt32(firstLastd[0]);
+            int[] max_values = new int[s];
+            Array.Clear(max_values, 0, max_values.Length);
+            int sItr = 0;
 
-                int last = Convert.ToInt32(firstLastd[1]);
+            Parallel.For(sItr,
+                         s,
+                         (i, state) =>
+                         {
+                             string[] firstLastd = Console.ReadLine().Split(' ');
 
-                string d = firstLastd[2];
+                             int first = Convert.ToInt32(firstLastd[0]);
 
-                GetHealthValues(n, genes, health, first, last, d, ref min, ref max);
-            }
+                             int last = Convert.ToInt32(firstLastd[1]);
 
-            Console.WriteLine("{0} {1}", min, max);
+                             string d = firstLastd[2];
 
-        }
+                             int Cost = 0;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static void GetHealthValues(int n,
-                                    string[] genes,
-                                    int[] health,
-                                    int first,
-                                    int last,
-                                    string d,
-                                    ref int min,
-                                    ref int max)
-        {
-            int Cost = 0;
+                             for (int nLoop = first; nLoop <= last; nLoop++)
+                             {
 
-            for (int nLoop = first; nLoop <= last; nLoop++)
-            {
+                                 int GeneCount = 0;
+                                 int Length = d.Length;
+                                 int CurrentIndex = d.IndexOf(genes[nLoop], 0, Length);
 
-                int GeneCount = 0;
-                int Length = d.Length;
-                int CurrentIndex = d.IndexOf(genes[nLoop], 0, Length);
+                                 while ((CurrentIndex != -1) && (CurrentIndex <= (Length)))
+                                 {
+                                     Cost += health[nLoop];
+                                     CurrentIndex = d.IndexOf(genes[nLoop], CurrentIndex + 1, ((Length) - (CurrentIndex + 1)));
+                                 }
 
-                while ((CurrentIndex != -1) && (CurrentIndex <= (Length)))
-                {
+                             }
 
-                    Cost += health[nLoop];
-                    CurrentIndex = d.IndexOf(genes[nLoop], CurrentIndex + 1, ((Length) - (CurrentIndex + 1)));
-                }
+                             if (min_values[i] > Cost)
+                             {
+                                 min_values[i] = Cost;
+                             }
 
-            }
+                             if (max_values[i] < Cost)
+                             {
+                                 max_values[i] = Cost;
+                             }
 
-            if (min > Cost)
-            {
-                min = Cost;
-            }
+                         });
 
-            if (max < Cost)
-            {
-                max = Cost;
-            }
+            Array.Sort(min_values);
+            Array.Sort(max_values);
 
-            return;
+            Console.WriteLine("{0} {1}", min_values[0], max_values[s - 1]);
 
         }
-
     }
 }
