@@ -30,20 +30,17 @@ namespace all_problems
 
             string[] genes = Console.ReadLine().Split(' ');
 
-            int[] health = Array.ConvertAll(Console.ReadLine().Split(' '), healthTemp => Convert.ToInt32(healthTemp))
+            uint[] health = Array.ConvertAll(Console.ReadLine().Split(' '), healthTemp => Convert.ToUInt32(healthTemp))
             ;
             int s = Convert.ToInt32(Console.ReadLine());
 
-
-            int[] min_values = Enumerable.Repeat<int>(Int32.MaxValue, s).ToArray();
-
-            int[] max_values = new int[s];
-            Array.Clear(max_values, 0, max_values.Length);
             int sItr = 0;
+            List<uint> CostList = new List<uint>();
 
             Parallel.For(sItr,
                          s,
-                         (i, state) =>
+                         () => new List<uint>(),
+                         (i, state, LocalCost) =>
                          {
                              string[] firstLastd = Console.ReadLine().Split(' ');
 
@@ -53,40 +50,41 @@ namespace all_problems
 
                              string d = firstLastd[2];
 
-                             int Cost = 0;
+                             uint Cost = 0;
 
                              for (int nLoop = first; nLoop <= last; nLoop++)
                              {
-
-                                 int GeneCount = 0;
-                                 int Length = d.Length;
-                                 int CurrentIndex = d.IndexOf(genes[nLoop], 0, Length);
-
+                                 string sub_string = d;
+                                 int Length = sub_string.Length;
+                                 int CurrentIndex = sub_string.IndexOf(genes[nLoop], 0, Length);
                                  while ((CurrentIndex != -1) && (CurrentIndex <= (Length)))
                                  {
                                      Cost += health[nLoop];
-                                     CurrentIndex = d.IndexOf(genes[nLoop], CurrentIndex + 1, ((Length) - (CurrentIndex + 1)));
+                                     sub_string = sub_string.Substring(CurrentIndex + 1);
+                                     Length = sub_string.Length;
+                                     CurrentIndex = sub_string.IndexOf(genes[nLoop], 0, Length);
                                  }
-
                              }
 
-                             if (min_values[i] > Cost)
-                             {
-                                 min_values[i] = Cost;
-                             }
+                             LocalCost.Add(Cost);
+                             return LocalCost;
 
-                             if (max_values[i] < Cost)
-                             {
-                                 max_values[i] = Cost;
-                             }
+                         },
+            LocalCost =>
+            {
+                lock (CostList)
+                {
+                    CostList.AddRange(LocalCost);
+                }
+            });
 
-                         });
+            CostList.Sort();
 
-            Array.Sort(min_values);
-            Array.Sort(max_values);
-
-            Console.WriteLine("{0} {1}", min_values[0], max_values[s - 1]);
+            Console.WriteLine("{0} {1}", CostList[0], CostList[s - 1]);
 
         }
+
+
     }
 }
+
