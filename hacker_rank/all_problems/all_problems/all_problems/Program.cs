@@ -10,6 +10,8 @@ namespace all_problems
     {
         static void Main(string[] args)
         {
+
+            FindHealthyDNA.ClassMain(args);
         }
     }
 }

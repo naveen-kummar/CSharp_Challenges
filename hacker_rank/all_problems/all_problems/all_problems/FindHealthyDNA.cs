@@ -24,15 +24,19 @@ namespace all_problems
     class FindHealthyDNA
     {
 
-        static void ClassMain(string[] args)
+        public static void ClassMain(string[] args)
         {
             int n = Convert.ToInt32(Console.ReadLine());
 
-            string[] genes = Console.ReadLine().Split(' ');
+            //string[] genes = Console.ReadLine().Split(' ');
 
-            uint[] health = Array.ConvertAll(Console.ReadLine().Split(' '), healthTemp => Convert.ToUInt32(healthTemp))
+            string[] genes = System.IO.File.ReadAllText(@"D:\hacker_input\input1.txt").Split(' ');
+
+            uint[] health = Array.ConvertAll(System.IO.File.ReadAllText(@"D:\hacker_input\input2.txt").Split(' '), healthTemp => Convert.ToUInt32(healthTemp))
             ;
             int s = Convert.ToInt32(Console.ReadLine());
+
+            string[] dna_data = System.IO.File.ReadAllText(@"D:\hacker_input\input3.txt").Split(new string[] {"\r\n"}, StringSplitOptions.None);
 
             int sItr = 0;
             List<uint> CostList = new List<uint>();
@@ -42,7 +46,7 @@ namespace all_problems
                          () => new List<uint>(),
                          (i, state, LocalCost) =>
                          {
-                             string[] firstLastd = Console.ReadLine().Split(' ');
+                             string[] firstLastd = dna_data[i].Split(' ');
 
                              int first = Convert.ToInt32(firstLastd[0]);
 
@@ -74,6 +78,8 @@ namespace all_problems
             {
                 lock (CostList)
                 {
+                    LocalCost.Sort();
+                    Console.WriteLine(" LocalCost : {0} {1} Count: {2}", LocalCost[0], LocalCost[LocalCost.Count - 1], LocalCost.Count);
                     CostList.AddRange(LocalCost);
                 }
             });
@@ -82,9 +88,11 @@ namespace all_problems
 
             Console.WriteLine("{0} {1}", CostList[0], CostList[s - 1]);
 
+            string str = Console.ReadLine();
+
         }
 
-
+        
     }
 }
 
